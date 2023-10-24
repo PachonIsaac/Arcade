@@ -41,9 +41,9 @@ Button_Termo_OFF = pygame.image.load(Button_Termo_OFF).convert_alpha()
 Button_Termo_ON  = os.path.join(current_directory,"Assets/Buttons/Button_Termo_ON.png")
 Button_Termo_ON  = pygame.image.load(Button_Termo_ON).convert_alpha()
 
-Button_PongPower_OFF = os.path.join(current_directory,"Assets/Buttons/Button_PongPower_OFF.png")
+Button_PongPower_OFF = os.path.join(current_directory,"Assets/Buttons/Button_Exit_OFF.png")
 Button_PongPower_OFF = pygame.image.load(Button_PongPower_OFF).convert_alpha()
-Button_PongPower_ON  = os.path.join(current_directory,"Assets/Buttons/Button_PongPower_ON.png")
+Button_PongPower_ON  = os.path.join(current_directory,"Assets/Buttons/Button_Exit_ON.png")
 Button_PongPower_ON  = pygame.image.load(Button_PongPower_ON).convert_alpha()
 
 
