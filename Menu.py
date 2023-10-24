@@ -116,4 +116,9 @@ if __name__ == "__main__":
             pygame.display.update()
             pygame.time.delay(2000)
 
+        #Pong clasixco
+        if selected_game == "Pong":
+            import Pong_clases
+            Pong_clases.juego_pong()
+
     
