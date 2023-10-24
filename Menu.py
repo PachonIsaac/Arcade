@@ -120,5 +120,9 @@ if __name__ == "__main__":
         if selected_game == "Pong":
             import Pong_clases
             Pong_clases.juego_pong()
+        #Super pong
+        if selected_game == "Pong Retro":
+            import SuperPong_clases
+            SuperPong_clases.juego_pong()
 
     
