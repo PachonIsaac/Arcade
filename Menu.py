@@ -41,10 +41,10 @@ Button_Termo_OFF = pygame.image.load(Button_Termo_OFF).convert_alpha()
 Button_Termo_ON  = os.path.join(current_directory,"Assets/Buttons/Button_Termo_ON.png")
 Button_Termo_ON  = pygame.image.load(Button_Termo_ON).convert_alpha()
 
-Button_PongPower_OFF = os.path.join(current_directory,"Assets/Buttons/Button_Exit_OFF.png")
-Button_PongPower_OFF = pygame.image.load(Button_PongPower_OFF).convert_alpha()
-Button_PongPower_ON  = os.path.join(current_directory,"Assets/Buttons/Button_Exit_ON.png")
-Button_PongPower_ON  = pygame.image.load(Button_PongPower_ON).convert_alpha()
+Button_Exit_OFF = os.path.join(current_directory,"Assets/Buttons/Button_Exit_OFF.png")
+Button_Exit_OFF = pygame.image.load(Button_Exit_OFF).convert_alpha()
+Button_Exit_ON  = os.path.join(current_directory,"Assets/Buttons/Button_Exit_ON.png")
+Button_Exit_ON  = pygame.image.load(Button_Exit_ON).convert_alpha()
 
 
 class Menu:
@@ -59,7 +59,7 @@ class Menu:
             {"image": Button_PongRetro_OFF, "rect": pygame.Rect(225, 240, 150, 50), "game": "Pong Retro"},
             {"image": Button_Triki_OFF, "rect": pygame.Rect(425, 240, 150, 50), "game": "Triki"},
             {"image": Button_Termo_OFF, "rect": pygame.Rect(225, 310, 150, 50), "game": "Imagen Termográfica"},
-            {"image": Button_PongPower_OFF, "rect": pygame.Rect(425, 310, 150, 50), "game": "Pong Power"}
+            {"image": Button_Exit_OFF, "rect": pygame.Rect(425, 310, 150, 50), "game": "Exit"}
         ]
         self.Robot_Instance = Robot()
 
@@ -101,12 +101,12 @@ class Menu:
                     if 225 <= mouse_pos[0] <= 375 and 310 <= mouse_pos[1] <= 360:
                         self.screen.blit(Button_Termo_ON, (225, 310))
                     if 425 <= mouse_pos[0] <= 575 and 310 <= mouse_pos[1] <= 360:
-                        self.screen.blit(Button_PongPower_ON, (425, 310))
+                        self.screen.blit(Button_Exit_ON, (425, 310))
                 
             pygame.display.update()
 
 if __name__ == "__main__":
-    options = ["Triki", "Pong", "Pong Retro", "Robot", "Imagen Termográfica"]
+    options = ["Triki", "Pong", "Pong Retro", "Robot", "Imagen Termográfica","Exit"]
 
     menu = Menu(screen, options)
     while True:    
@@ -124,5 +124,9 @@ if __name__ == "__main__":
         if selected_game == "Pong Retro":
             import SuperPong_clases
             SuperPong_clases.juego_pong()
+        #Exit
+        if selected_game == "Exit":
+            pygame.quit()
+            sys.exit()
 
     
