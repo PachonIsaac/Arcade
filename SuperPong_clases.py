@@ -6,7 +6,6 @@ pygame.init()
 # colores
 black = (0, 0, 0)
 white = (255, 255, 255)
-green = (0, 255, 0)
 
 size = (800, 600)
 screen = pygame.display.set_mode(size)
@@ -15,34 +14,38 @@ clock = pygame.time.Clock()
 # Get current directory
 current_directory = os.path.dirname(__file__)
 # Load background image
-PongClassic_Background = os.path.join(current_directory, "Assets/Background/PongClassic_Background.png")
-PongClassic_Background = pygame.image.load(PongClassic_Background).convert_alpha()
+PongRetro_Background = os.path.join(current_directory, "Assets/Background/PongRetro_Background.png")
+PongRetro_Background = pygame.image.load(PongRetro_Background).convert_alpha()
+Proyectil_Image = pygame.image.load(os.path.join(current_directory, "Assets/PongRetro/Hadoken.png")).convert_alpha()
 sonido_raqueta = pygame.mixer.Sound("Arcade/Assets/Sound/Raqueta.mp3")
 gol = pygame.mixer.Sound("Arcade/Assets/Sound/Gol.mp3")
 
 
+pygame.mixer.music.load("Arcade/Assets/Sound/Kens Theme.mp3")
+
 class Proyectil:
-    def __init__(self, x_coor, y_coor, speed_x, speed_y, radio):
-        self.x_coor = x_coor
-        self.y_coor = y_coor
+    def __init__(self, x_coor, y_coor, speed_x, speed_y):
+        self.image = Proyectil_Image  # Usar la imagen del proyectil
+        self.rect = self.image.get_rect()
+        self.rect.center = (x_coor, y_coor)
         self.speed_x = speed_x
         self.speed_y = speed_y
-        self.radio = radio
-        self.rect = pygame.Rect(self.x_coor - self.radio, self.y_coor - self.radio, 2 * self.radio, 2 * self.radio)
 
     def dibujar(self, screen):
-        pygame.draw.circle(screen, white, [self.x_coor, self.y_coor], self.radio)
-        self.rect = pygame.Rect(self.x_coor - self.radio, self.y_coor - self.radio, 2 * self.radio, 2 * self.radio)
+        if self.speed_x < 0:
+            screen.blit(pygame.transform.flip(self.image, True, False), self.rect)
+        else:
+            screen.blit(self.image, self.rect)
 
     def mover(self):
-        self.x_coor += self.speed_x
-        self.y_coor += self.speed_y
+        self.rect.x += self.speed_x
+        self.rect.y += self.speed_y
 
 
 class Player1:
     def __init__(self):
-        self.width = 15
-        self.height = 90
+        self.width = 60
+        self.height = 130
         self.x_coor = 50
         self.y_coor = 255
         self.y_speed = 0
@@ -50,40 +53,33 @@ class Player1:
         self.puntos = 0
         self.proyectiles = []
 
+        # Cargar la imagen del jugador
+        self.image = pygame.image.load(os.path.join(current_directory, "Assets/PongRetro/Ryu.png")).convert_alpha()
+        self.image = pygame.transform.scale(self.image, (self.width, self.height))
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (self.x_coor, self.y_coor)
+
     def dibujar(self, screen):
-        pygame.draw.rect(screen, white, [self.x_coor, self.y_coor, self.width, self.height])
+        screen.blit(self.image, self.rect)
 
     def mover(self):
         self.y_coor += self.y_speed
         self.x_coor += self.x_speed
         for proyectil in self.proyectiles:
             proyectil.mover()
-
-    def movimientos(self, event):
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_w:
-                self.y_speed = -3
-            if event.key == pygame.K_s:
-                self.y_speed = 3
-            if event.key == pygame.K_a:
-                self.x_speed = -3
-            if event.key == pygame.K_d:
-                self.x_speed = 3
-            if event.key == pygame.K_SPACE:  # Cambiar la tecla de disparo
-                self.lanzar_proyectil()
-
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_w:
-                self.y_speed = 0
-            if event.key == pygame.K_s:
-                self.y_speed = 0
-            if event.key == pygame.K_a:
-                self.x_speed = 0
-            if event.key == pygame.K_d:
-                self.x_speed = 0
+        self.rect.topleft = (self.x_coor, self.y_coor)
+        #Restringir las posiciones del jugador
+        if self.y_coor < 0:
+            self.y_coor = 0
+        elif self.y_coor > 470:
+            self.y_coor = 470
+        if self.x_coor < 0:
+            self.x_coor = 0
+        elif self.x_coor > 350:
+            self.x_coor = 350
 
     def lanzar_proyectil(self):
-        proyectil = Proyectil(self.x_coor + self.width // 2, self.y_coor + self.height // 2, 5, 0, 5)
+        proyectil = Proyectil(self.x_coor + self.width // 2, self.y_coor + self.height // 2, 5, 0)
         self.proyectiles.append(proyectil)
 
     def colision(self, linea):
@@ -95,8 +91,8 @@ class Player1:
 
 class Player2:
     def __init__(self):
-        self.width = 15
-        self.height = 90
+        self.width = 60
+        self.height = 130
         self.x_coor = 735
         self.y_coor = 255
         self.y_speed = 0
@@ -104,40 +100,35 @@ class Player2:
         self.puntos = 0
         self.proyectiles = []
 
+        # Cargar la imagen del jugador
+        self.image = pygame.image.load(os.path.join(current_directory, "Assets/PongRetro/Ken.png")).convert_alpha()
+        self.image = pygame.transform.scale(self.image, (self.width, self.height))
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (self.x_coor, self.y_coor)
+
     def dibujar(self, screen):
-        pygame.draw.rect(screen, white, [self.x_coor, self.y_coor, self.width, self.height])
+        screen.blit(self.image, self.rect)
 
     def mover(self):
         self.y_coor += self.y_speed
         self.x_coor += self.x_speed
         for proyectil in self.proyectiles:
             proyectil.mover()
+        self.rect.topleft = (self.x_coor, self.y_coor)
 
-    def movimientos(self, event):
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
-                self.y_speed = -3
-            if event.key == pygame.K_DOWN:
-                self.y_speed = 3
-            if event.key == pygame.K_LEFT:
-                self.x_speed = -3
-            if event.key == pygame.K_RIGHT:
-                self.x_speed = 3
-            if event.key == pygame.K_l:
-                self.lanzar_proyectil()
+        #Restringir las posiciones del jugador
+        if self.y_coor < 0:
+            self.y_coor = 0
+        elif self.y_coor > 470:
+            self.y_coor = 470
 
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_UP:
-                self.y_speed = 0
-            if event.key == pygame.K_DOWN:
-                self.y_speed = 0
-            if event.key == pygame.K_LEFT:
-                self.x_speed = 0
-            if event.key == pygame.K_RIGHT:
-                self.x_speed = 0
+        if self.x_coor < 400:
+            self.x_coor = 400
+        elif self.x_coor > 735:
+            self.x_coor = 735
 
     def lanzar_proyectil(self):
-        proyectil = Proyectil(self.x_coor + self.width // 2, self.y_coor + self.height // 2, -5, 0, 5)
+        proyectil = Proyectil(self.x_coor + self.width // 2, self.y_coor + self.height // 2, -5, 0)
         self.proyectiles.append(proyectil)
 
     def colision(self, linea):
@@ -146,59 +137,115 @@ class Player2:
         if self.x_coor > 785 or self.x_coor < 400:
             self.x_speed *= -1
 
-
 class Pelota:
     def __init__(self):
         self.x = 400
         self.y = 300
-        self.speed_x = 3
-        self.speed_y = 3
-        self.radio = 10
+        self.speed_x = 1
+        self.speed_y = 1
+        self.image = pygame.image.load(os.path.join(current_directory, "Assets/PongRetro/Ball.png")).convert_alpha()
+        self.rect = self.image.get_rect(center=(self.x, self.y))
 
     def dibujar(self, screen):
-        pelota = pygame.draw.circle(screen, white, [self.x, self.y], self.radio)
-        return pelota
+        screen.blit(self.image, self.rect)
 
     def mover(self):
         self.x += self.speed_x
         self.y += self.speed_y
+        self.rect.center = (self.x, self.y)
 
     def movimiento(self):
         if self.y > 590 or self.y < 10:
             self.speed_y *= -1
 
-    def colision(self, player1, player2, proyectil):
-        if self.x < player1.x_coor + player1.width and player1.y_coor < self.y < player1.y_coor + player1.height:
-            self.speed_x *= -1
-            pygame.mixer.Sound.play(sonido_raqueta)
-            if len(player1.proyectiles) > 0:
-                proyectil = player1.proyectiles[0]
-                proyectil.speed_y = self.speed_y
+    def colision(self, player1, player2):
+        proyectiles_eliminar = []
+        for proj in player1.proyectiles:
+            if self.rect.colliderect(proj.rect):
+                self.speed_y *= -1  # Invertir la dirección en Y de la pelota
+                pygame.mixer.Sound.play(sonido_raqueta)
+                proyectiles_eliminar.append(proj)
+                #Ajustar la posicion del jugador para evitar que se superposiciones
+                
 
-        if self.x > player2.x_coor and player2.y_coor < self.y < player2.y_coor + player2.height:
-            self.speed_x *= -1
+        for proj in player2.proyectiles:
+            if self.rect.colliderect(proj.rect):
+                self.speed_y *= -1  # Invertir la dirección en Y de la pelota
+                self.x += self.speed_x
+                pygame.mixer.Sound.play(sonido_raqueta)
+                proyectiles_eliminar.append(proj)
+        
+        #Colision jugador-pelota
+        if self.rect.colliderect(player1.rect):
+            self.speed_x = abs(self.speed_x)  # Invierte la dirección en X
+            self.x = player1.rect.right + self.rect.width // 2  # Alinea con el lado derecho de player1
             pygame.mixer.Sound.play(sonido_raqueta)
-            if len(player2.proyectiles) > 0:
-                proyectil = player2.proyectiles[0]
-                proyectil.speed_y = self.speed_y
+
+        if self.rect.colliderect(player2.rect):
+            self.speed_x = -abs(self.speed_x)  # Invierte la dirección en X
+            self.x = player2.rect.left - self.rect.width // 2  # Alinea con el lado izquierdo de player2
+            pygame.mixer.Sound.play(sonido_raqueta)
+
+        for proj in proyectiles_eliminar:
+            for proj in player1.proyectiles:
+                player1.proyectiles.remove(proj)
+            for proj in player2.proyectiles:
+                player2.proyectiles.remove(proj)
+        
 
 
 def juego_pong():
     puntos1 = 0
     puntos2 = 0
     game_over = False
-    pelota = Pelota()  # Crear la pelota como una instancia de la clase Pelota
+    pelota = Pelota()
     player1 = Player1()
     player2 = Player2()
     fuente = pygame.font.SysFont("Arial", 60)
+    pygame.mixer.music.play(-1)
 
     while not game_over:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 game_over = True
-                pygame.quit()
-            player1.movimientos(event)
-            player2.movimientos(event)
+
+        keys = pygame.key.get_pressed()
+
+        # Mover player1
+        if keys[pygame.K_w]:
+            player1.y_speed = -3
+        elif keys[pygame.K_s]:
+            player1.y_speed = 3
+        else:
+            player1.y_speed = 0
+
+        if keys[pygame.K_a]:
+            player1.x_speed = -3
+        elif keys[pygame.K_d]:
+            player1.x_speed = 3
+        else:
+            player1.x_speed = 0
+
+        if keys[pygame.K_SPACE]:
+            player1.lanzar_proyectil()
+
+        # Mover player2
+        if keys[pygame.K_UP]:
+            player2.y_speed = -3
+        elif keys[pygame.K_DOWN]:
+            player2.y_speed = 3
+        else:
+            player2.y_speed = 0
+
+        if keys[pygame.K_LEFT]:
+            player2.x_speed = -3
+        elif keys[pygame.K_RIGHT]:
+            player2.x_speed = 3
+        else:
+            player2.x_speed = 0
+
+        if keys[pygame.K_l]:
+            player2.lanzar_proyectil()
 
         if pelota.x > 800:
             pelota.x = 400
@@ -208,7 +255,6 @@ def juego_pong():
             puntos1 += 1
             pygame.mixer.Sound.play(gol)
 
-        # Si la pelota sale del lado izquierdo
         if pelota.x < 0:
             pelota.x = 400
             pelota.y = 300
@@ -219,14 +265,15 @@ def juego_pong():
 
         if puntos1 == 5 or puntos2 == 5:
             game_over = True
+            pygame.mixer.music.stop()
 
         player1.mover()
         player2.mover()
         pelota.mover()
         pelota.movimiento()
-        pelota.colision(player1, player2, Proyectil)  # Pasamos el objeto proyectil al método colision
+        pelota.colision(player1, player2)
         screen.fill(black)
-        screen.blit(PongClassic_Background, (0, 0))
+        screen.blit(PongRetro_Background, (0, 0))
         linea = pygame.draw.line(screen, white, (400, 0), (400, 600), 5)
         player1.dibujar(screen)
         player2.dibujar(screen)
@@ -244,6 +291,7 @@ def juego_pong():
         pygame.display.update()
         clock.tick(60)
 
+    pygame.quit()
 
 if __name__ == "__main__":
     juego_pong()
